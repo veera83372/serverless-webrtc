@@ -38,16 +38,12 @@ $('#createBtn').click(function () {
 })
 
 $('#joinBtn').click(function () {
-  navigator.getUserMedia = navigator.getUserMedia ||
-                           navigator.webkitGetUserMedia ||
-                           navigator.mozGetUserMedia ||
-                           navigator.msGetUserMedia
-  navigator.getUserMedia({video: true, audio: true}, function (stream) {
+  navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function (stream) {
     var video = document.getElementById('localVideo')
-    video.src = window.URL.createObjectURL(stream)
+    video.srcObject = stream
     video.play()
     pc2.addStream(stream)
-  }, function (error) {
+  }).catch( function (error) {
     console.log('Error adding stream to pc2: ' + error)
   })
   $('#getRemoteOffer').modal('show')
@@ -59,6 +55,7 @@ $('#offerSentBtn').click(function () {
 
 $('#offerRecdBtn').click(function () {
   var offer = $('#remoteOffer').val()
+  console.log(offer)
   var offerDesc = new RTCSessionDescription(JSON.parse(offer))
   console.log('Received remote offer', offerDesc)
   writeToChatLog('Received remote offer', 'text-success')
@@ -154,13 +151,9 @@ function setupDC1 () {
 
 function createLocalOffer () {
   console.log('video1')
-  navigator.getUserMedia = navigator.getUserMedia ||
-                           navigator.webkitGetUserMedia ||
-                           navigator.mozGetUserMedia ||
-                           navigator.msGetUserMedia
-  navigator.getUserMedia({video: true, audio: true}, function (stream) {
+  navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function (stream) {
     var video = document.getElementById('localVideo')
-    video.src = window.URL.createObjectURL(stream)
+    video.srcObject = stream
     video.play()
     pc1.addStream(stream)
     console.log(stream)
@@ -172,7 +165,7 @@ function createLocalOffer () {
     },
     function () { console.warn("Couldn't create offer") },
     sdpConstraints)
-  }, function (error) {
+  }).catch( function (error) {
     console.log('Error adding stream to pc1: ' + error)
   })
 }
