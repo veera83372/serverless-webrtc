@@ -154,6 +154,7 @@ function createLocalOffer () {
   navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function (stream) {
     var video = document.getElementById('localVideo')
     video.srcObject = stream
+    video.volume =0 
     video.play()
     pc1.addStream(stream)
     console.log(stream)
